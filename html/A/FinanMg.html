@@ -41,7 +41,7 @@
                 <li><a href="FinanMg.html">Quản lý Tài Chính</a></li>
                 <li><a href="report.html">Báo Cáo & Phân Tích</a></li>
                 <li><a href="settings.html">Cài Đặt</a></li>
-                <li><a href="../../Index_login" onclick="logout()">Đăng Xuất</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
             </ul>
         </nav>
     </header>
@@ -49,8 +49,8 @@
     <main class="container">
         <h2>Chọn chức năng quản lý tài chính</h2>
         <div class="finance-option">
-            <button class="finance-btn" onclick="location.href='fee_management.html'">Quản Lý Học Phí</button>
-            <button class="finance-btn" onclick="location.href='expense_management.html'">Quản Lý Chi Phí Vận Hành</button>
+            <button class="finance-btn" onclick="location.href='FinanSub1.html'">Quản Lý Học Phí</button>
+            <button class="finance-btn" onclick="location.href='FinanSub2.html'">Quản Lý Chi Phí Vận Hành</button>
         </div>
     </main>
 
@@ -58,7 +58,7 @@
         function logout() {
             localStorage.removeItem('loggedIn');
             alert('Bạn đã đăng xuất!');
-            window.location.href = 'login.html';
+            window.location.href = '../../Index_loginform.html';
         }
     </script>
 </body>

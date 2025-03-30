@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Chi Phí Vận Hành</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .input-field {
+            padding: 10px;
+            margin: 5px;
+            width: 300px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: white;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .search-field {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        /* Modal */
+        #editModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Quản lý Chi Phí Vận Hành</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeA.html">Trang chủ</a></li>
+                <li><a href="UserMg.html">Quản lý Người Dùng</a></li>
+                <li><a href="FinanMg.html">Quản lý Tài Chính</a></li>
+                <li><a href="report.html">Báo Cáo & Phân Tích</a></li>
+                <li><a href="settings.html">Cài Đặt</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <h2>Quản lý Chi Phí Vận Hành</h2>
+        <div>
+            <input type="text" id="expenseName" class="input-field" placeholder="Tên Chi Phí">
+            <input type="date" id="expenseDate" class="input-field">
+            <input type="number" id="expenseAmount" class="input-field" placeholder="Số Tiền">
+            <select id="expenseStatus" class="input-field">
+                <option value="Đã thanh toán">Đã thanh toán</option>
+                <option value="Chưa thanh toán">Chưa thanh toán</option>
+            </select>
+            <button onclick="addExpense()" class="btn">Thêm Chi Phí</button>
+        </div>
+
+        <!-- Thêm ô tìm kiếm -->
+        <input type="text" id="searchInput" class="search-field" placeholder="Tìm kiếm chi phí theo tên hoặc ngày..." oninput="searchExpense()">
+
+        <h3>Danh Sách Chi Phí</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên Chi Phí</th>
+                    <th>Ngày</th>
+                    <th>Số Tiền</th>
+                    <th>Trạng Thái</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody id="expenseTableBody"></tbody>
+        </table>
+
+        <!-- Modal chỉnh sửa -->
+        <div id="editModal">
+            <h3>Sửa Chi Phí</h3>
+            <input type="text" id="editName" class="input-field" placeholder="Tên Chi Phí">
+            <input type="date" id="editDate" class="input-field">
+            <input type="number" id="editAmount" class="input-field" placeholder="Số Tiền">
+            <select id="editStatus" class="input-field">
+                <option value="Đã thanh toán">Đã thanh toán</option>
+                <option value="Chưa thanh toán">Chưa thanh toán</option>
+            </select>
+            <button onclick="saveExpense()" class="btn">Lưu</button>
+            <button onclick="closeEditModal()" class="btn">Hủy</button>
+        </div>
+    </main>
+
+<script>
+    let expenses = [
+        { id: 1, name: "Tiền điện", date: formatDate("2025-03-01"), amount: 500000, status: "Đã thanh toán" },
+        { id: 2, name: "Tiền nước", date: formatDate("2025-03-02"), amount: 200000, status: "Chưa thanh toán" },
+        { id: 3, name: "Chi phí bảo dưỡng", date: formatDate("2025-03-05"), amount: 1000000, status: "Đã thanh toán" }
+    ];
+
+    let editingExpenseId = null;
+
+    function formatDate(dateString) {
+        let date = new Date(dateString);
+        let day = String(date.getDate()).padStart(2, '0');
+        let month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed
+        let year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    function addExpense() {
+        let name = document.getElementById("expenseName").value;
+        let date = document.getElementById("expenseDate").value;
+        let amount = document.getElementById("expenseAmount").value;
+        let status = document.getElementById("expenseStatus").value;
+
+        if (!name || !date || !amount) {
+            alert("Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
+
+        let formattedDate = formatDate(date);
+
+        let expense = {
+            id: expenses.length + 1,
+            name: name,
+            date: formattedDate,
+            amount: amount,
+            status: status
+        };
+
+        expenses.push(expense);
+        loadExpenses();
+    }
+
+    function loadExpenses() {
+        let tableBody = document.getElementById("expenseTableBody");
+        tableBody.innerHTML = "";
+
+        expenses.forEach(expense => {
+            let row = `<tr>
+                <td>${expense.id}</td>
+                <td>${expense.name}</td>
+                <td>${expense.date}</td>
+                <td>${expense.amount}</td>
+                <td>${expense.status}</td>
+                <td>
+                    <button class='action-btn edit-btn' onclick="editExpense(${expense.id})">Sửa</button>
+                    <button class='action-btn delete-btn' onclick="deleteExpense(${expense.id})">Xóa</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function editExpense(id) {
+        let expense = expenses.find(exp => exp.id === id);
+        if (expense) {
+            editingExpenseId = expense.id;
+            document.getElementById("editName").value = expense.name;
+            document.getElementById("editDate").value = expense.date;
+            document.getElementById("editAmount").value = expense.amount;
+            document.getElementById("editStatus").value = expense.status;
+
+            // Hiển thị form chỉnh sửa
+            document.getElementById("editModal").style.display = "block";
+        }
+    }
+
+    function saveExpense() {
+        let name = document.getElementById("editName").value;
+        let date = document.getElementById("editDate").value;
+        let amount = document.getElementById("editAmount").value;
+        let status = document.getElementById("editStatus").value;
+
+        if (!name || !date || !amount) {
+            alert("Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
+
+        let expenseIndex = expenses.findIndex(exp => exp.id === editingExpenseId);
+        if (expenseIndex !== -1) {
+            expenses[expenseIndex] = {
+                id: editingExpenseId,
+                name: name,
+                date: formatDate(date),
+                amount: amount,
+                status: status
+            };
+        }
+
+        // Đóng modal sau khi lưu
+        document.getElementById("editModal").style.display = "none";
+        loadExpenses();
+    }
+
+    function closeEditModal() {
+        document.getElementById("editModal").style.display = "none";
+    }
+
+    function deleteExpense(id) {
+        expenses = expenses.filter(exp => exp.id !== id);
+        loadExpenses();
+    }
+
+    function searchExpense() {
+        let searchTerm = document.getElementById("searchInput").value.toLowerCase();
+        let filteredExpenses = expenses.filter(exp => {
+            return exp.name.toLowerCase().includes(searchTerm) || exp.date.includes(searchTerm);
+        });
+
+        let tableBody = document.getElementById("expenseTableBody");
+        tableBody.innerHTML = "";
+
+        filteredExpenses.forEach(expense => {
+            let row = `<tr>
+                <td>${expense.id}</td>
+                <td>${expense.name}</td>
+                <td>${expense.date}</td>
+                <td>${expense.amount}</td>
+                <td>${expense.status}</td>
+                <td>
+                    <button class='action-btn edit-btn' onclick="editExpense(${expense.id})">Sửa</button>
+                    <button class='action-btn delete-btn' onclick="deleteExpense(${expense.id})">Xóa</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    window.onload = loadExpenses;
+</script>
+</body>
+</html>

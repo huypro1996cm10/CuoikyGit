@@ -60,6 +60,38 @@
             background-color: #dc3545;
             color: white;
         }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            overflow: auto;
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 40%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -72,7 +104,7 @@
                 <li><a href="FinanMg.html">Quản lý Tài Chính</a></li>
                 <li><a href="report.html">Báo Cáo & Phân Tích</a></li>
                 <li><a href="settings.html">Cài Đặt</a></li>
-                <li><a href="../../Index_login" onclick="logout()">Đăng Xuất</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
             </ul>
         </nav>
     </header>
@@ -111,12 +143,37 @@
             <tbody id="feeTableBody"></tbody>
         </table>
     </main>
+
+    <!-- Modal for editing -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Chỉnh sửa Khoản Phí</h2>
+            <input type="text" id="editChildName" class="input-field" placeholder="Tên Trẻ">
+            <input type="text" id="editFeeName" class="input-field" placeholder="Tên Khoản Phí">
+            <input type="date" id="editFeeDate" class="input-field">
+            <input type="text" id="editFeeAmount" class="input-field" placeholder="Số Tiền">
+            <select id="editFeeStatus" class="input-field">
+                <option value="Đã đóng">Đã đóng</option>
+                <option value="Chưa đóng">Chưa đóng</option>
+            </select>
+            <button onclick="saveEdit()" class="action-btn edit-btn">Lưu thay đổi</button>
+        </div>
+    </div>
+
     <script>
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../Index_loginform.html';
+        }
         let feeData = [
             { id: 1, child: "Nguyễn Văn A", feeName: "Học phí tháng 3", date: "15/03/2025", amount: "3,000,000 VND", status: "Đã đóng" },
             { id: 2, child: "Trần Thị B", feeName: "Học phí tháng 3", date: "16/03/2025", amount: "3,000,000 VND", status: "Chưa đóng" },
             { id: 3, child: "Lê Văn C", feeName: "Học phí tháng 3", date: "17/03/2025", amount: "3,000,000 VND", status: "Đã đóng" }
         ];
+
+        let currentEditId = null;
 
         function loadFees() {
             let tableBody = document.getElementById("feeTableBody");
@@ -138,36 +195,98 @@
             });
         }
 
+        function editFee(id) {
+            let fee = feeData.find(f => f.id === id);
+            if (fee) {
+                currentEditId = id;
+                document.getElementById("editChildName").value = fee.child;
+                document.getElementById("editFeeName").value = fee.feeName;
+                document.getElementById("editFeeDate").value = fee.date;
+                document.getElementById("editFeeAmount").value = fee.amount.replace(' VND', '');
+                document.getElementById("editFeeStatus").value = fee.status;
+
+                document.getElementById("editModal").style.display = "block";
+            }
+        }
+
+        function closeModal() {
+            document.getElementById("editModal").style.display = "none";
+        }
+
+        function saveEdit() {
+            let child = document.getElementById("editChildName").value;
+            let feeName = document.getElementById("editFeeName").value;
+            let date = document.getElementById("editFeeDate").value;
+            let amount = document.getElementById("editFeeAmount").value;
+            let status = document.getElementById("editFeeStatus").value;
+
+            let fee = feeData.find(f => f.id === currentEditId);
+            if (fee) {
+                fee.child = child;
+                fee.feeName = feeName;
+                fee.date = new Date(date).toLocaleDateString('vi-VN');
+                fee.amount = amount + ' VND';
+                fee.status = status;
+            }
+            loadFees();
+            closeModal();
+        }
+
         function deleteFee(id) {
-            feeData = feeData.filter(fee => fee.id !== id);
+            feeData = feeData.filter(f => f.id !== id);
             loadFees();
         }
 
         function addFee() {
-            let child = document.getElementById("childName").value.trim();
-            let feeName = document.getElementById("feeName").value.trim();
-            let dateInput = document.getElementById("feeDate").value;
-            let amount = document.getElementById("feeAmount").value.trim();
+            let child = document.getElementById("childName").value;
+            let feeName = document.getElementById("feeName").value;
+            let date = document.getElementById("feeDate").value;
+            let amount = document.getElementById("feeAmount").value;
             let status = document.getElementById("feeStatus").value;
 
-            if (!child || !feeName || !dateInput || !amount) {
-                alert("Vui lòng nhập đầy đủ thông tin trước khi thêm khoản phí.");
-                return;
-            }
-
-            let date = new Date(dateInput).toLocaleDateString('vi-VN');
-            let formattedAmount = parseInt(amount.replace(/[^0-9]/g, "")).toLocaleString('vi-VN') + " VND";
-
-            feeData.push({ id: feeData.length + 1, child, feeName, date, amount: formattedAmount, status });
+            let newFee = {
+                id: feeData.length + 1,
+                child: child,
+                feeName: feeName,
+                date: new Date(date).toLocaleDateString('vi-VN'),
+                amount: amount + ' VND',
+                status: status
+            };
+            feeData.push(newFee);
             loadFees();
         }
 
-        function logout() {
-            localStorage.removeItem('loggedIn');
-            alert('Bạn đã đăng xuất!');
-            window.location.href = 'login.html';
+        function searchFees() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let filteredFees = feeData.filter(fee => {
+                return fee.child.toLowerCase().includes(input) || 
+                    fee.feeName.toLowerCase().includes(input) || 
+                    fee.date.includes(input);
+            });
+            displayFees(filteredFees);
         }
 
+        function displayFees(fees) {
+            let tableBody = document.getElementById("feeTableBody");
+            tableBody.innerHTML = "";
+            fees.forEach(fee => {
+                let row = `<tr>
+                    <td>${fee.id}</td>
+                    <td>${fee.child}</td>
+                    <td>${fee.feeName}</td>
+                    <td>${fee.date}</td>
+                    <td>${fee.amount}</td>
+                    <td>${fee.status}</td>
+                    <td>
+                        <button class='action-btn edit-btn' onclick="editFee(${fee.id})">Sửa</button>
+                        <button class='action-btn delete-btn' onclick="deleteFee(${fee.id})">Xóa</button>
+                    </td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        // Initialize table
         loadFees();
     </script>
 </body>
