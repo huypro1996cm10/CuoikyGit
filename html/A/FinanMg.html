@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Tài Chính</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .finance-option {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .finance-btn {
+            padding: 20px 40px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .finance-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Quản lý Tài Chính</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeA.html">Trang Chủ</a></li>
+                <li><a href="UserMg.html">Quản lý Người Dùng</a></li>
+                <li><a href="FinanMg.html">Quản lý Tài Chính</a></li>
+                <li><a href="report.html">Báo Cáo & Phân Tích</a></li>
+                <li><a href="settings.html">Cài Đặt</a></li>
+                <li><a href="../../Index_login" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <h2>Chọn chức năng quản lý tài chính</h2>
+        <div class="finance-option">
+            <button class="finance-btn" onclick="location.href='fee_management.html'">Quản Lý Học Phí</button>
+            <button class="finance-btn" onclick="location.href='expense_management.html'">Quản Lý Chi Phí Vận Hành</button>
+        </div>
+    </main>
+
+    <script>
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
