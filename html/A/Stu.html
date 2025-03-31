@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Học Sinh</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        button {
+            padding: 8px 12px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: white;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .add-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        /* Thanh tìm kiếm */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        .search-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body onload="loadStudents()">
+    <header>
+        <h1>Quản Trị Hệ Thống</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeA.html">Trang Chủ</a></li>
+                <li><a href="Stu.html">Quản lý học sinh</a></li>
+                <li><a href="UserMg.html">Quản lý Người Dùng</a></li>
+                <li><a href="FinanMg.html">Quản lý Tài Chính</a></li>
+                <li><a href="report.html">Báo Cáo & Phân Tích</a></li>
+                <li><a href="settings.html">Cài Đặt</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <button class="add-btn" onclick="openAddModal()">Thêm Học Sinh</button>
+        <h2>Danh Sách Học Sinh</h2>
+
+        <!-- Thanh tìm kiếm -->
+        <div class="search-container">
+            <input type="text" id="search-name" placeholder="Tìm kiếm theo tên..." onkeyup="filterStudents()">
+            <input type="text" id="search-class" placeholder="Tìm kiếm theo lớp..." onkeyup="filterStudents()">
+            <input type="text" id="search-teacher" placeholder="Tìm kiếm theo giáo viên CN..." onkeyup="filterStudents()">
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Họ và Tên</th>
+                    <th>Lớp</th>
+                    <th>Bảo mẫu</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="studentTable">
+                <!-- Dữ liệu sẽ được điền bằng JavaScript -->
+            </tbody>
+        </table>
+    </main>
+
+<script>
+    let students = [
+        { id: 1, name: "Nguyễn Văn A", class: "Mầm", teacher: "Cô Mai" },
+        { id: 2, name: "Trần Thị B", class: "Trồi", teacher: "Thầy Minh" },
+        { id: 3, name: "Phạm Hồng C", class: "Lá", teacher: "Cô Mai" },
+        { id: 4, name: "Lê Minh D", class: "Mầm", teacher: "Cô Lan" },
+        { id: 5, name: "Nguyễn Thị E", class: "Lá", teacher: "Thầy Minh" }
+    ];
+
+    function loadStudents() {
+        let tableBody = document.getElementById("studentTable");
+        tableBody.innerHTML = "";
+        
+        students.forEach(student => {
+            let row = `<tr>
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${student.class}</td>
+                <td>${student.teacher}</td>
+                <td>
+                    <button class="edit-btn" onclick="editStudent(${student.id})">Sửa</button>
+                    <button class="delete-btn" onclick="deleteStudent(${student.id})">Xóa</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function filterStudents() {
+        let nameFilter = document.getElementById("search-name").value.toLowerCase();
+        let classFilter = document.getElementById("search-class").value.toLowerCase();
+        let teacherFilter = document.getElementById("search-teacher").value.toLowerCase();
+        
+        let tableBody = document.getElementById("studentTable");
+        tableBody.innerHTML = "";
+
+        students.forEach(student => {
+            if (student.name.toLowerCase().includes(nameFilter) &&
+                student.class.toLowerCase().includes(classFilter) &&
+                student.teacher.toLowerCase().includes(teacherFilter)) {
+                let row = `<tr>
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.class}</td>
+                    <td>${student.teacher}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editStudent(${student.id})">Sửa</button>
+                        <button class="delete-btn" onclick="deleteStudent(${student.id})">Xóa</button>
+                    </td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            }
+        });
+    }
+
+    function deleteStudent(id) {
+        let confirmDelete = confirm("Bạn có chắc chắn muốn xóa?");
+        if (confirmDelete) {
+            students = students.filter(s => s.id !== id);
+            loadStudents();
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Giảng Dạy</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .container {
+            width: 80%;
+            margin: auto;
+            text-align: center;
+        }
+        .schedule-box {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .week-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn-prev { background-color: #007bff; color: white; }
+        .btn-next { background-color: #28a745; color: white; }
+        .btn:hover { opacity: 0.8; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Lịch Giảng Dạy</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeC.html">Trang Chủ</a></li>
+                <li><a href="Atend.html">Điểm Danh</a></li>
+                <li><a href="Sche.html">Lịch Giảng Dạy</a></li>
+                <li><a href="salary.html">Lương & Phụ Cấp</a></li>
+		<li><a href="info.html">Thông tin tài khoản</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="schedule-box">
+            <h2 id="week-title"></h2>
+            <div class="week-navigation">
+                <button class="btn btn-prev" onclick="changeWeek(-1)">← Tuần Trước</button>
+                <button class="btn btn-next" onclick="changeWeek(1)">Tuần Sau →</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Thứ</th>
+                        <th>Ngày</th>
+                        <th>Lớp</th>
+                        <th>Giờ Học</th>
+                        <th>Môn</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-table">
+                    <!-- Lịch học sẽ được load bằng JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        let currentWeek = 0;
+        const today = new Date();
+        const teacherName = localStorage.getItem("teacherName") || "Nguyễn Thị Mai";
+
+        const scheduleData = [
+            { day: 1, class: "Mầm", time: "08:00 - 10:00", subject: "Hát & Vẽ", teacher: "Nguyễn Thị Mai" },
+            { day: 2, class: "Trồi", time: "09:00 - 11:00", subject: "Toán", teacher: "Nguyễn Thị Mai" },
+            { day: 3, class: "Lá", time: "13:00 - 15:00", subject: "Tiếng Anh", teacher: "Nguyễn Thị Mai" },
+            { day: 4, class: "Mầm", time: "10:00 - 12:00", subject: "Thể dục", teacher: "Nguyễn Thị Mai" },
+            { day: 5, class: "Trồi", time: "14:00 - 16:00", subject: "Kể chuyện", teacher: "Nguyễn Thị Mai" },
+            { day: 6, class: "Lá", time: "08:00 - 10:00", subject: "Thực hành Kỹ năng", teacher: "Nguyễn Thị Mai" }
+        ];
+
+        function getStartOfWeek(weekOffset) {
+            let start = new Date(today);
+            start.setDate(today.getDate() - today.getDay() + 1 + (weekOffset * 7));
+            return start;
+        }
+
+        function getFormattedDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function loadSchedule() {
+            const startOfWeek = getStartOfWeek(currentWeek);
+            const scheduleTable = document.getElementById("schedule-table");
+            scheduleTable.innerHTML = "";
+
+            for (let i = 0; i < 6; i++) {
+                let date = new Date(startOfWeek);
+                date.setDate(startOfWeek.getDate() + i);
+                let formattedDate = getFormattedDate(date);
+                let schedule = scheduleData.find(s => s.day === i + 1 && s.teacher === teacherName);
+
+                if (schedule) {
+                    let row = `
+                        <tr>
+                            <td>Thứ ${i + 2}</td>
+                            <td>${formattedDate}</td>
+                            <td>${schedule.class}</td>
+                            <td>${schedule.time}</td>
+                            <td>${schedule.subject}</td>
+                        </tr>
+                    `;
+                    scheduleTable.innerHTML += row;
+                }
+            }
+
+            document.getElementById("week-title").innerText = `Lịch Giảng Dạy - Tuần ${getFormattedDate(startOfWeek)}`;
+        }
+
+        function changeWeek(offset) {
+            currentWeek += offset;
+            loadSchedule();
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../Index_loginform.html';
+        }
+
+        window.onload = loadSchedule;
+    </script>
+</body>
+</html>

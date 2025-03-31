@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiến Độ Học Tập</title>
+    <link rel="stylesheet" href="../../css/style.css">
+	   <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        table {
+            width: 70%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+        .btn {
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .btn-success { background-color: green; color: white; }
+        .btn-warning { background-color: orange; color: white; }
+        .btn-danger { background-color: red; color: white; }
+    </style>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sự Kiện Nhà Trường</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 50%;
+            text-align: left;
+        }
+        .close {
+            float: right;
+            font-size: 25px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body onload="loadEvents()">
+    <header>
+        <h1>Sự Kiện Nhà Trường</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeB.html">Trang Chủ</a></li>
+                <li><a href="tdht.html">Học Tập</a></li>
+                <li><a href="events.html">Sự Kiện Nhà Trường</a></li>
+                <li><a href="payments.html">Thanh Toán Học Phí</a></li>
+                <li><a href="infoUS.html">Thông Tin Tài Khoản</a></li>
+                <li><a href="../Index_loginform.html">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Danh Sách Sự Kiện</h2>
+        <button onclick="openEventForm()">Thêm Sự Kiện</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên Sự Kiện</th>
+                    <th>Ngày</th>
+                    <th>Địa Điểm</th>
+                    <th>Mô Tả</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody id="eventTable">
+                <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Form thêm/sửa sự kiện -->
+    <div id="eventForm" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEventForm()">&times;</span>
+            <h3 id="formTitle">Thêm Sự Kiện</h3>
+            <input type="hidden" id="eventId">
+            <label>Tên Sự Kiện:</label>
+            <input type="text" id="eventName"><br>
+            <label>Ngày:</label>
+            <input type="date" id="eventDate"><br>
+            <label>Địa Điểm:</label>
+            <input type="text" id="eventLocation"><br>
+            <label>Mô Tả:</label>
+            <textarea id="eventDescription"></textarea><br>
+            <button onclick="saveEvent()">Lưu</button>
+        </div>
+    </div>
+
+    <script>
+        let events = [
+            { id: 1, name: "Hội Thảo Công Nghệ", date: "2025-04-15", location: "Hội Trường A", description: "Hội thảo về AI và Robotics." },
+            { id: 2, name: "Lễ Tổng Kết", date: "2025-05-30", location: "Sân Trường", description: "Tổng kết năm học và trao giải." }
+        ];
+
+        function loadEvents() {
+            let eventTable = document.getElementById("eventTable");
+            eventTable.innerHTML = "";
+            events.forEach(event => {
+                let row = `<tr>
+                    <td>${event.id}</td>
+                    <td>${event.name}</td>
+                    <td>${event.date}</td>
+                    <td>${event.location}</td>
+                    <td>${event.description}</td>
+                    <td>
+                        <button onclick="editEvent(${event.id})">Sửa</button>
+                        <button onclick="deleteEvent(${event.id})">Xóa</button>
+                    </td>
+                </tr>`;
+                eventTable.innerHTML += row;
+            });
+        }
+
+        function openEventForm(id = null) {
+            document.getElementById("eventForm").style.display = "flex";
+            if (id) {
+                let event = events.find(e => e.id === id);
+                document.getElementById("eventId").value = event.id;
+                document.getElementById("eventName").value = event.name;
+                document.getElementById("eventDate").value = event.date;
+                document.getElementById("eventLocation").value = event.location;
+                document.getElementById("eventDescription").value = event.description;
+                document.getElementById("formTitle").innerText = "Chỉnh Sửa Sự Kiện";
+            } else {
+                document.getElementById("eventId").value = "";
+                document.getElementById("eventName").value = "";
+                document.getElementById("eventDate").value = "";
+                document.getElementById("eventLocation").value = "";
+                document.getElementById("eventDescription").value = "";
+                document.getElementById("formTitle").innerText = "Thêm Sự Kiện";
+            }
+        }
+
+        function closeEventForm() {
+            document.getElementById("eventForm").style.display = "none";
+        }
+
+        function saveEvent() {
+            let id = document.getElementById("eventId").value;
+            let name = document.getElementById("eventName").value;
+            let date = document.getElementById("eventDate").value;
+            let location = document.getElementById("eventLocation").value;
+            let description = document.getElementById("eventDescription").value;
+
+            if (name === "" || date === "" || location === "" || description === "") {
+                alert("Vui lòng nhập đầy đủ thông tin.");
+                return;
+            }
+
+            if (id) {
+                let event = events.find(e => e.id == id);
+                event.name = name;
+                event.date = date;
+                event.location = location;
+                event.description = description;
+            } else {
+                let newEvent = {
+                    id: events.length + 1,
+                    name: name,
+                    date: date,
+                    location: location,
+                    description: description
+                };
+                events.push(newEvent);
+            }
+
+            closeEventForm();
+            loadEvents();
+        }
+
+        function deleteEvent(id) {
+            if (confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
+                events = events.filter(e => e.id !== id);
+                loadEvents();
+            }
+        }
+
+        function logout() {
+            alert("Đăng xuất thành công!");
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống kê học sinh theo lớp</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .container {
+            text-align: center;
+            width: 75%;
+            margin: 0px;
+        }
+        .finance-option {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .finance-btn {
+            padding: 20px 40px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .finance-btn:hover {
+            background-color: #45a049;
+        }
+        /* Phần nhập số liệu */
+        .input-section {
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            width: 80%;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+        .input-section label {
+            margin: 0 10px;
+        }
+        .input-section input {
+            width: 60px;
+            padding: 5px;
+        }
+        .btn {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            max-width: 20%;
+            height: 50px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Thống kê học sinh theo lớp</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeA.html">Trang Chủ</a></li>
+                <li><a href="UserMg.html">Quản lý Người Dùng</a></li>
+                <li><a href="FinanMg.html">Quản lý Tài Chính</a></li>
+                <li><a href="report.html">Báo Cáo & Phân Tích</a></li>
+                <li><a href="settings.html">Cài Đặt</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Thống kê học sinh theo lớp</h1>
+        <!-- Phần nhập số liệu -->
+        <div class="input-section">
+            <h2>Nhập số liệu</h2>
+            <label>Mầm: <input type="number" id="inputMam" value="20"></label>
+            <label>Chồi: <input type="number" id="inputChoi" value="30"></label>
+            <label>Lá: <input type="number" id="inputLa" value="25"></label>
+            <br><br>
+            <button class="btn" onclick="updateChart()">Cập nhật số liệu</button>
+        </div>
+        <!-- Biểu đồ -->
+        <canvas id="classChart"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById("classChart").getContext("2d");
+        let classData = {
+            labels: ["Mầm", "Chồi", "Lá"],
+            datasets: [{
+                label: "Số Trẻ",
+                data: [20, 30, 25],
+                backgroundColor: "rgba(54, 162, 235, 0.6)"
+            }]
+        };
+        let classChart = new Chart(ctx, {
+            type: "bar",
+            data: classData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        
+        function updateChart() {
+            const mam = parseFloat(document.getElementById("inputMam").value);
+            const choi = parseFloat(document.getElementById("inputChoi").value);
+            const la = parseFloat(document.getElementById("inputLa").value);
+            classChart.data.datasets[0].data = [mam, choi, la];
+            classChart.update();
+        }
+        
+        function logout() {
+            alert("Đăng xuất thành công!");
+            window.location.href = "../../Index_loginform.html";
+        }
+    </script>
+</body>
+</html>

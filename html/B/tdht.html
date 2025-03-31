@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý - Phụ Huynh</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        table {
+            width: 70%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+        .btn {
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .btn-success { background-color: green; color: white; }
+        .btn-warning { background-color: orange; color: white; }
+        .btn-danger { background-color: red; color: white; }
+    </style>
+</head>
+<body onload="checkRole('parent')">
+    <header>
+        <h1>Trang Phụ Huynh</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeB.html">Trang Chủ</a></li>
+                <li><a href="tdht.html">Học Tập</a></li>
+                <li><a href="events.html">Sự Kiện Nhà Trường</a></li>
+                <li><a href="payments.html">Thanh Toán Học Phí</a></li>
+                <li><a href="infoUS.html">Thông tin tài khoản</a></li>
+                <li><a href="../Index_loginform.html">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <h2>Tiến Độ Học Tập</h2>
+            <button class="btn btn-success" onclick="addSubject()">Thêm Môn Học</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên Học Sinh</th>
+                        <th>Giới Tính</th>
+                        <th>Tên Môn Học</th>
+                        <th>Điểm Số</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody id="subjectTable">
+                    <tr>
+                        <td>1</td>
+                        <td>Nguyễn Văn A</td>
+                        <td>Nam</td>
+                        <td>Toán</td>
+                        <td>8.5</td>
+                        <td>
+                            <button class="btn btn-warning" onclick="editRow(this)">Sửa</button>
+                            <button class="btn btn-danger" onclick="deleteRow(this)">Xóa</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Trần Thị B</td>
+                        <td>Nữ</td>
+                        <td>Vật Lý</td>
+                        <td>7.0</td>
+                        <td>
+                            <button class="btn btn-warning" onclick="editRow(this)">Sửa</button>
+                            <button class="btn btn-danger" onclick="deleteRow(this)">Xóa</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <script>
+        function addSubject() {
+            const tableBody = document.getElementById("subjectTable");
+            const id = tableBody.children.length + 1;
+            const studentName = prompt("Nhập tên học sinh:");
+            const gender = prompt("Nhập giới tính (Nam/Nữ):");
+            const subject = prompt("Nhập tên môn học:");
+            const score = prompt("Nhập điểm số:");
+            
+            if (studentName && gender && subject && score) {
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td>${id}</td>
+                    <td>${studentName}</td>
+                    <td>${gender}</td>
+                    <td>${subject}</td>
+                    <td>${score}</td>
+                    <td>
+                        <button class="btn btn-warning" onclick="editRow(this)">Sửa</button>
+                        <button class="btn btn-danger" onclick="deleteRow(this)">Xóa</button>
+                    </td>
+                `;
+                tableBody.appendChild(newRow);
+            }
+        }
+
+        function editRow(button) {
+            const row = button.closest("tr");
+            const studentName = prompt("Nhập tên học sinh mới:", row.cells[1].innerText);
+            const gender = prompt("Nhập giới tính mới (Nam/Nữ):", row.cells[2].innerText);
+            const subject = prompt("Nhập tên môn học mới:", row.cells[3].innerText);
+            const score = prompt("Nhập điểm số mới:", row.cells[4].innerText);
+            
+            if (studentName && gender && subject && score) {
+                row.cells[1].innerText = studentName;
+                row.cells[2].innerText = gender;
+                row.cells[3].innerText = subject;
+                row.cells[4].innerText = score;
+            }
+        }
+
+        function deleteRow(button) {
+            if (confirm("Bạn có chắc chắn muốn xóa không?")) {
+                button.closest("tr").remove();
+            }
+        }
+    </script>
+</body>
+</html>

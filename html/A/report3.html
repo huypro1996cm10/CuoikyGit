@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tỷ lệ vắng học của học sinh</title>
+        <link rel="stylesheet" href="../../css/style.css">
+        <style>
+            .container {
+                text-align: center;
+                margin-top: 50px;
+            }
+            .finance-option {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-top: 30px;
+            }
+            .finance-btn {
+                padding: 20px 40px;
+                font-size: 18px;
+                border: none;
+                cursor: pointer;
+                background-color: #4CAF50;
+                color: white;
+                border-radius: 8px;
+                transition: 0.3s;
+            }
+            .finance-btn:hover {
+                background-color: #45a049;
+            }
+            /* Phần nhập số liệu */
+            .input-section {
+                margin: 20px auto;
+                padding: 15px;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+                width: 80%;
+                background-color: #f9f9f9;
+                text-align: center;
+            }
+            .input-section label {
+                margin: 0 10px;
+            }
+            .input-section input {
+                width: 60px;
+                padding: 5px;
+            }
+            .btn {
+                padding: 10px 15px;
+                background-color: #28a745;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+            canvas {
+                display: block;
+                margin: 20px auto;
+                max-width: 80%;
+                height: 300px;
+            }
+        </style>
+    </head>
+<body>
+    <header>
+        <h1>Tỷ lệ vắng học của học sinh</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeA.html">Trang Chủ</a></li>
+                <li><a href="UserMg.html">Quản lý Người Dùng</a></li>
+                <li><a href="FinanMg.html">Quản lý Tài Chính</a></li>
+                <li><a href="report.html">Báo Cáo & Phân Tích</a></li>
+                <li><a href="settings.html">Cài Đặt</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <h1>Tỷ lệ vắng học của học sinh</h1>
+        <!-- Phần nhập số liệu -->
+        <div class="input-section">
+            <h2>Nhập số liệu</h2>
+            <label>Dưới 5%: <input type="number" id="inputDuoi5" value="5"></label>
+            <label>5%-10%: <input type="number" id="input5to10" value="2"></label>
+            <label>10%-20%: <input type="number" id="input10to20" value="3"></label>
+            <label>Trên 20%: <input type="number" id="inputTren20" value="0"></label>
+            <br><br>
+            <button class="btn" onclick="updateChart()">Cập nhật số liệu</button>
+        </div>
+        <!-- Biểu đồ -->
+        <canvas id="absenceChart"></canvas>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById("absenceChart").getContext("2d");
+        let absenceData = {
+            labels: ["Dưới 5%", "5% - 10%", "10% - 20%", "Trên 20%"],
+            datasets: [{
+                label: "Tỷ lệ vắng học",
+                data: [5, 2, 3, 0],
+                backgroundColor: ["green", "yellow", "orange", "red"]
+            }]
+        };
+        let absenceChart = new Chart(ctx, {
+            type: "doughnut",
+            data: absenceData,
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+        
+        function updateChart() {
+            const duoi5 = parseFloat(document.getElementById("inputDuoi5").value);
+            const from5to10 = parseFloat(document.getElementById("input5to10").value);
+            const from10to20 = parseFloat(document.getElementById("input10to20").value);
+            const tren20 = parseFloat(document.getElementById("inputTren20").value);
+            absenceChart.data.datasets[0].data = [duoi5, from5to10, from10to20, tren20];
+            absenceChart.update();
+        }
+        
+        function logout() {
+            alert("Đăng xuất thành công!");
+            window.location.href = "../../Index_loginform.html";
+        }
+    </script>
+</body>
+</html>

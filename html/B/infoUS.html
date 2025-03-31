@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Tin Tài Khoản Phụ Huynh</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .container {
+            width: 60%;
+            margin: auto;
+            text-align: left;
+        }
+        .info-box {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background: #f9f9f9;
+            margin-top: 20px;
+        }
+        .info-box h3 {
+            color: #007bff;
+        }
+        .info-item {
+            margin: 10px 0;
+        }
+        .info-item label {
+            font-weight: bold;
+        }
+        .edit-btn, .save-btn {
+            margin-top: 10px;
+            padding: 10px 15px;
+            font-size: 16px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .edit-btn { background-color: #007bff; }
+        .save-btn { background-color: #28a745; display: none; }
+        input {
+            border: 1px solid #ccc;
+            padding: 8px;
+            width: 100%;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Thông Tin Tài Khoản</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeB.html">Trang Chủ</a></li>
+                <li><a href="tdht.html">Học Tập</a></li>
+                <li><a href="events.html">Sự Kiện Nhà Trường</a></li>
+                <li><a href="payments.html">Thanh Toán Học Phí</a></li>
+                <li><a href="infoUS.html">Thông tin tài khoản</a></li>
+                <li><a href="../Index_loginform.html">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="info-box">
+            <h3>Thông Tin Cá Nhân</h3>
+            <div class="info-item">
+                <label>Họ và Tên:</label>
+                <input type="text" id="fullName" disabled>
+            </div>
+            <div class="info-item">
+                <label>Email:</label>
+                <input type="email" id="email" disabled>
+            </div>
+            <div class="info-item">
+                <label>Số Điện Thoại:</label>
+                <input type="text" id="phone" disabled>
+            </div>
+            <div class="info-item">
+                <label>Địa Chỉ:</label>
+                <input type="text" id="address" disabled>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>Thông Tin Con Em</h3>
+            <div class="info-item">
+                <label>Họ và Tên:</label>
+                <input type="text" id="childName" disabled>
+            </div>
+            <div class="info-item">
+                <label>Lớp Học:</label>
+                <input type="text" id="childClass" disabled>
+            </div>
+            <div class="info-item">
+                <label>Giáo Viên Chủ Nhiệm:</label>
+                <input type="text" id="teacherName" disabled>
+            </div>
+        </div>
+
+        <button class="edit-btn" onclick="editInfo()">Chỉnh Sửa</button>
+        <button class="save-btn" onclick="saveInfo()">Lưu</button>
+    </main>
+
+    <script>
+        function loadUserInfo() {
+            let userInfo = JSON.parse(localStorage.getItem("userInfo")) || {
+                fullName: "Nguyễn Văn An",
+                email: "an.nguyen@example.com",
+                phone: "0987654321",
+                address: "123 Đường ABC, TP.HCM"
+            };
+
+            let childInfo = JSON.parse(localStorage.getItem("childInfo")) || {
+                childName: "Nguyễn Minh Khôi",
+                childClass: "Lớp Mầm 1",
+                teacherName: "Cô Trần Thị Hoa"
+            };
+
+            document.getElementById("fullName").value = userInfo.fullName;
+            document.getElementById("email").value = userInfo.email;
+            document.getElementById("phone").value = userInfo.phone;
+            document.getElementById("address").value = userInfo.address;
+
+            document.getElementById("childName").value = childInfo.childName;
+            document.getElementById("childClass").value = childInfo.childClass;
+            document.getElementById("teacherName").value = childInfo.teacherName;
+        }
+
+        function editInfo() {
+            let inputs = document.querySelectorAll("input");
+            inputs.forEach(input => input.disabled = false);
+            document.querySelector(".edit-btn").style.display = "none";
+            document.querySelector(".save-btn").style.display = "inline-block";
+        }
+
+        function saveInfo() {
+            let userInfo = {
+                fullName: document.getElementById("fullName").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                address: document.getElementById("address").value
+            };
+
+            let childInfo = {
+                childName: document.getElementById("childName").value,
+                childClass: document.getElementById("childClass").value,
+                teacherName: document.getElementById("teacherName").value
+            };
+
+            localStorage.setItem("userInfo", JSON.stringify(userInfo));
+            localStorage.setItem("childInfo", JSON.stringify(childInfo));
+            alert("Thông tin đã được cập nhật!");
+
+            let inputs = document.querySelectorAll("input");
+            inputs.forEach(input => input.disabled = true);
+            document.querySelector(".edit-btn").style.display = "inline-block";
+            document.querySelector(".save-btn").style.display = "none";
+        }
+
+        window.onload = loadUserInfo;
+    </script>
+</body>
+</html>

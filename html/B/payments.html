@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán Học Phí</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body onload="checkRole('parent')">
+    <header>
+        <h1>Trang Phụ Huynh</h1>
+        <nav>
+            <ul>
+                <li><a href="formhomeB.html">Trang Chủ</a></li>
+                <li><a href="./B/tdht.html">Học Tập</a></li>
+                <li><a href="events.html">Sự Kiện Nhà Trường</a></li>
+                <li><a href="payments.html" class="active">Thanh Toán Học Phí</a></li>
+                <li><a href="./B/infoUS.html">Thông tin tài khoản</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Thanh Toán Học Phí</h2>
+        <p>Quản lý học phí và nạp tiền vào tài khoản.</p>
+
+        <!-- Hiển thị số dư -->
+        <div class="fee-info">
+            <p><strong>Số dư hiện tại:</strong> <span id="balance">5000000</span> VNĐ</p>
+            <button onclick="showDepositOptions()">Nạp tiền</button>
+        </div>
+
+        <!-- Danh sách học phí cần thanh toán -->
+        <h3>Các khoản cần thanh toán</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Nội dung</th>
+                    <th>Số tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="feeTable">
+                <tr>
+                    <td>1</td>
+                    <td>Học phí tháng 3</td>
+                    <td>2500000</td>
+                    <td class="pending">Chưa thanh toán</td>
+                    <td><button onclick="payFee(2500000, this)">Thanh toán</button></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Học phí tháng 2</td>
+                    <td>2500000</td>
+                    <td class="paid">Đã thanh toán</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Modal Nạp Tiền -->
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <h3>Nạp Tiền</h3>
+            <label for="method">Chọn phương thức:</label>
+            <select id="method" onchange="togglePaymentFields()">
+                <option value="bank">Thẻ Ngân Hàng</option>
+                <option value="card">Thẻ Điện Thoại</option>
+            </select>
+
+            <div id="bankFields">
+                <input type="text" id="cardNumber" placeholder="Số thẻ ngân hàng">
+                <input type="text" id="cardName" placeholder="Tên chủ thẻ">
+                <input type="text" id="expiryDate" placeholder="MM/YY">
+                <input type="password" id="cvv" placeholder="CVV">
+            </div>
+
+            <div id="cardFields" style="display:none;">
+                <input type="number" id="cardValue" placeholder="Mệnh giá thẻ">
+                <input type="text" id="cardCode" placeholder="Mã thẻ cào">
+            </div>
+
+            <button onclick="confirmDeposit()">Xác Nhận</button>
+            <button class="cancel" onclick="closeModal()">Hủy</button>
+        </div>
+    </div>
+
+    <script>
+        function payFee(amount, button) {
+            let balanceElement = document.getElementById("balance");
+            let balance = parseInt(balanceElement.innerText);
+
+            if (balance >= amount) {
+                balance -= amount;
+                balanceElement.innerText = balance;
+                let row = button.parentElement.parentElement;
+                row.cells[3].innerText = "Đã thanh toán";
+                row.cells[3].classList.remove("pending");
+                row.cells[3].classList.add("paid");
+                row.cells[4].innerHTML = "-"; // Xóa nút thanh toán
+                alert("Thanh toán thành công!");
+            } else {
+                alert("Số dư không đủ để thanh toán.");
+            }
+        }
+
+        function showDepositOptions() {
+            document.getElementById("depositModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("depositModal").style.display = "none";
+        }
+
+        function togglePaymentFields() {
+            let method = document.getElementById("method").value;
+            document.getElementById("bankFields").style.display = method === "bank" ? "block" : "none";
+            document.getElementById("cardFields").style.display = method === "card" ? "block" : "none";
+        }
+
+        function confirmDeposit() {
+            let amount = prompt("Nhập số tiền muốn nạp (VNĐ):", "1000000");
+            if (amount) {
+                let balanceElement = document.getElementById("balance");
+                let balance = parseInt(balanceElement.innerText);
+                balance += parseInt(amount);
+                balanceElement.innerText = balance;
+                alert("Nạp tiền thành công!");
+                closeModal();
+            }
+        }
+    </script>
+
+    <style>
+        /* Căn chỉnh bảng */
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        td:nth-child(3), td:nth-child(4) { 
+            width: 20%; /* Điều chỉnh chiều rộng cho cột số tiền & trạng thái */
+        }
+
+        td:nth-child(2) {
+            width: 40%; /* Cột nội dung rộng hơn */
+        }
+
+        .pending { color: red; font-weight: bold; }
+        .paid { color: green; font-weight: bold; }
+
+        /* Giao diện nút */
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        .modal-content {
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            table {
+                width: 100%;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            button {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</body>
+</html>

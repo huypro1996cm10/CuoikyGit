@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Lương & Hợp Đồng</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .container {
+            width: 80%;
+            margin: auto;
+            text-align: center;
+        }
+        .filter-section {
+            margin: 20px 0;
+        }
+        .salary-table, .contract-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .total-salary {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #28a745;
+        }
+        .contract-box {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bảng Lương & Hợp Đồng</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeC.html">Trang Chủ</a></li>
+                <li><a href="Atend.html">Điểm Danh</a></li>
+                <li><a href="Sche.html">Lịch Giảng Dạy</a></li>
+                <li><a href="salary.html">Lương & Phụ Cấp</a></li>
+		<li><a href="info.html">Thông tin tài khoản</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="filter-section">
+            <label for="month-select">Chọn tháng:</label>
+            <input type="month" id="month-select" onchange="loadSalary()">
+        </div>
+
+        <h2>Bảng Lương</h2>
+        <table class="salary-table">
+            <thead>
+                <tr>
+                    <th>Tháng</th>
+                    <th>Lương Cơ Bản</th>
+                    <th>Phụ Cấp</th>
+                    <th>Thưởng</th>
+                    <th>Tổng Lương</th>
+                </tr>
+            </thead>
+            <tbody id="salary-table-body">
+                <!-- Dữ liệu sẽ được tải lên bằng JavaScript -->
+            </tbody>
+        </table>
+        <p class="total-salary" id="total-salary">Tổng lương thực nhận: 0 VNĐ</p>
+
+        <div class="contract-box">
+            <h2>Hợp Đồng Lao Động</h2>
+            <table class="contract-table">
+                <thead>
+                    <tr>
+                        <th>Loại Hợp Đồng</th>
+                        <th>Ngày Ký</th>
+                        <th>Ngày Hết Hạn</th>
+                    </tr>
+                </thead>
+                <tbody id="contract-table-body">
+                    <!-- Hợp đồng lao động sẽ được tải lên bằng JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const salaryData = [
+            { month: "2025-01", baseSalary: 8000000, allowance: 1500000, bonus: 500000 },
+            { month: "2025-02", baseSalary: 8000000, allowance: 1500000, bonus: 800000 },
+            { month: "2025-03", baseSalary: 8000000, allowance: 1500000, bonus: 700000 }
+        ];
+
+        const contractData = [
+            { type: "Hợp đồng chính thức", startDate: "01/01/2024", endDate: "31/12/2026" }
+        ];
+
+        function loadSalary() {
+            const selectedMonth = document.getElementById("month-select").value;
+            const salaryTable = document.getElementById("salary-table-body");
+            salaryTable.innerHTML = "";
+
+            let totalSalary = 0;
+            const salaryRecord = salaryData.find(s => s.month === selectedMonth);
+
+            if (salaryRecord) {
+                totalSalary = salaryRecord.baseSalary + salaryRecord.allowance + salaryRecord.bonus;
+                let row = `
+                    <tr>
+                        <td>${selectedMonth}</td>
+                        <td>${salaryRecord.baseSalary.toLocaleString()} VNĐ</td>
+                        <td>${salaryRecord.allowance.toLocaleString()} VNĐ</td>
+                        <td>${salaryRecord.bonus.toLocaleString()} VNĐ</td>
+                        <td>${totalSalary.toLocaleString()} VNĐ</td>
+                    </tr>
+                `;
+                salaryTable.innerHTML = row;
+            }
+
+            document.getElementById("total-salary").innerText = `Tổng lương thực nhận: ${totalSalary.toLocaleString()} VNĐ`;
+        }
+
+        function loadContract() {
+            const contractTable = document.getElementById("contract-table-body");
+            contractTable.innerHTML = "";
+
+            contractData.forEach(contract => {
+                let row = `
+                    <tr>
+                        <td>${contract.type}</td>
+                        <td>${contract.startDate}</td>
+                        <td>${contract.endDate}</td>
+                    </tr>
+                `;
+                contractTable.innerHTML += row;
+            });
+        }
+
+        function setDefaultMonth() {
+            const today = new Date();
+            const defaultMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+            document.getElementById("month-select").value = defaultMonth;
+            loadSalary();
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../Index_loginform.html';
+        }
+
+        window.onload = () => {
+            setDefaultMonth();
+            loadContract();
+        };
+    </script>
+</body>
+</html>

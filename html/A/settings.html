@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        body.dark {
+            background-color: black;
+            color: white;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .card {
+            width: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .switch {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Cài Đặt</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeA.html">Trang Chủ</a></li>
+                <li><a href="UserMg.html">Quản lý Người Dùng</a></li>
+                <li><a href="FinanMg.html">Quản lý Tài Chính</a></li>
+                <li><a href="report.html">Báo Cáo & Phân Tích</a></li>
+                <li><a href="settings.html">Cài Đặt</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <span id="darkModeLabel">🌙/☀️ Chế độ tối</span>
+            <input type="checkbox" id="darkModeToggle" class="switch">
+        </div>
+        <div class="card">
+            <span id="soundLabel">🔊/🔇 Âm thanh</span>
+            <input type="checkbox" id="soundToggle" class="switch">
+        </div>
+        <div class="card">
+            <span id="languageLabel">🌐 Ngôn ngữ</span>
+            <select id="languageSelect">
+                <option value="vi">Tiếng Việt</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+    </div>
+    
+    <script>
+        // Kiểm tra và áp dụng dark mode khi trang load
+        if (localStorage.getItem("darkMode") === "enabled") {
+            document.body.classList.add("dark");
+            document.getElementById("darkModeToggle").checked = true;
+        }
+
+        const darkModeToggle = document.getElementById("darkModeToggle");
+        const soundToggle = document.getElementById("soundToggle");
+        const languageSelect = document.getElementById("languageSelect");
+
+        const labels = {
+            vi: {
+                darkMode: "🌙/☀️ Chế độ tối",
+                sound: "🔊/🔇 Âm thanh",
+                language: "🌐 Ngôn ngữ"
+            },
+            en: {
+                darkMode: "🌙/☀️ Dark Mode",
+                sound: "🔊/🔇 Sound",
+                language: "🌐 Language"
+            }
+        };
+
+        darkModeToggle.addEventListener("change", () => {
+            if (darkModeToggle.checked) {
+                document.body.classList.add("dark");
+                localStorage.setItem("darkMode", "enabled");
+            } else {
+                document.body.classList.remove("dark");
+                localStorage.setItem("darkMode", "disabled");
+            }
+        });
+
+        soundToggle.addEventListener("change", () => {
+            const audio = new Audio("/toggle.mp3");
+            if (soundToggle.checked) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        });
+
+        languageSelect.addEventListener("change", () => {
+            const lang = languageSelect.value;
+            document.getElementById("darkModeLabel").textContent = labels[lang].darkMode;
+            document.getElementById("soundLabel").textContent = labels[lang].sound;
+            document.getElementById("languageLabel").textContent = labels[lang].language;
+        });
+
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../Index_loginform.html';
+        }
+    </script>
+</body>
+</html>

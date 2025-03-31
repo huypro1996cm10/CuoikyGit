@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điểm Danh Trẻ</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .container {
+            width: 80%;
+            margin: auto;
+            text-align: center;
+        }
+        .attendance-list, .attendance-tracking {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            border-radius: 5px;
+        }
+        .btn-mark { background-color: #28a745; }
+        .btn-reset { background-color: #dc3545; }
+        .btn-back { background-color: #007bff; }
+        .btn-detail { background-color: #ffc107; color: black; }
+        .btn:hover {
+            opacity: 0.8;
+        }
+        input[type="checkbox"] {
+            transform: scale(1.3);
+        }
+        .hidden {
+            display: none;
+        }
+        .detail-list {
+            text-align: left;
+            margin-top: 10px;
+        }
+        #attendance-date {
+            padding: 8px;
+            font-size: 16px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Điểm Danh Trẻ</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeC.html">Trang Chủ</a></li>
+                <li><a href="Atend.html">Điểm Danh</a></li>
+                <li><a href="Sche.html">Lịch Giảng Dạy</a></li>
+                <li><a href="salary.html">Lương & Phụ Cấp</a></li>
+		<li><a href="info.html">Thông tin tài khoản</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Chọn ngày điểm danh -->
+        <section>
+            <h2>Ngày Điểm Danh</h2>
+            <span id="attendance-date"></span>
+        </section>
+
+        <!-- Danh sách trẻ cần điểm danh -->
+        <section class="attendance-list">
+            <h2>Chọn Trẻ Cần Điểm Danh</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên Trẻ</th>
+                        <th>Ngày</th>
+                        <th>Điểm Danh</th>
+                    </tr>
+                </thead>
+                <tbody id="student-list">
+                    <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
+                </tbody>
+            </table>
+            <button class="btn btn-mark" onclick="markAttendance()">Xác Nhận Điểm Danh</button>
+            <button class="btn btn-reset" onclick="resetAttendance()">Làm Mới</button>
+        </section>
+
+        <!-- Theo dõi điểm danh -->
+        <section class="attendance-tracking">
+            <h2>Lịch Sử Điểm Danh</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Số Trẻ Có Mặt</th>
+                        <th>Chi Tiết</th>
+                    </tr>
+                </thead>
+                <tbody id="attendance-log">
+                    <!-- Dữ liệu điểm danh sẽ được lưu vào đây -->
+                </tbody>
+            </table>
+        </section>
+
+        <button class="btn btn-back" onclick="location.href='Atend.html'">Quay Lại</button>
+    </main>
+
+    <script>
+        // Hàm lấy ngày hiện tại theo format dd/mm/yyyy
+        function getFormattedDate() {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Cập nhật ngày điểm danh trên giao diện
+        function updateDate() {
+            document.getElementById("attendance-date").innerText = getFormattedDate();
+        }
+
+        // Danh sách trẻ em (có thể thay thế bằng dữ liệu từ backend)
+        const students = [
+            { id: 1, name: "Nguyễn Văn A" },
+            { id: 2, name: "Trần Thị B" },
+            { id: 3, name: "Lê Văn C" },
+            { id: 4, name: "Phạm Thị D" },
+            { id: 5, name: "Hoàng Văn E" }
+        ];
+
+        // Tải danh sách trẻ lên giao diện
+        function loadStudents() {
+            const studentList = document.getElementById("student-list");
+            studentList.innerHTML = "";
+            const today = getFormattedDate();
+
+            students.forEach((student, index) => {
+                studentList.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${student.name}</td>
+                        <td>${today}</td>
+                        <td><input type="checkbox" class="attendance-checkbox"></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Điểm danh và lưu vào lịch sử
+        function markAttendance() {
+            const checkboxes = document.querySelectorAll(".attendance-checkbox");
+            let presentStudents = [];
+            let absentStudents = [];
+            const today = getFormattedDate();
+
+            students.forEach((student, index) => {
+                if (checkboxes[index].checked) {
+                    presentStudents.push(student.name);
+                } else {
+                    absentStudents.push(student.name);
+                }
+            });
+
+            if (presentStudents.length === 0) {
+                alert("Vui lòng chọn ít nhất một trẻ để điểm danh!");
+                return;
+            }
+
+            const attendanceLog = document.getElementById("attendance-log");
+
+            let newRow = `
+                <tr>
+                    <td>${today}</td>
+                    <td>${presentStudents.length}</td>
+                    <td><button class="btn btn-detail" onclick="showDetails('${today}')">Chi Tiết</button></td>
+                </tr>
+                <tr id="detail-${today}" class="hidden">
+                    <td colspan="3">
+                        <div class="detail-list">
+                            <strong>Trẻ Có Mặt:</strong> <br> ${presentStudents.join(", ")} <br><br>
+                            <strong>Trẻ Vắng:</strong> <br> ${absentStudents.join(", ")}
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            attendanceLog.innerHTML += newRow;
+            alert("Điểm danh thành công!");
+        }
+
+        // Hiển thị chi tiết điểm danh
+        function showDetails(date) {
+            let detailRow = document.getElementById("detail-" + date);
+            detailRow.classList.toggle("hidden");
+        }
+
+        // Làm mới danh sách checkbox
+        function resetAttendance() {
+            document.querySelectorAll(".attendance-checkbox").forEach(checkbox => checkbox.checked = false);
+        }
+
+        // Xử lý đăng xuất
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../Index_loginform.html';
+        }
+
+        // Gọi hàm khi trang tải
+        window.onload = function () {
+            updateDate();
+            loadStudents();
+        };
+    </script>
+</body>
+</html>

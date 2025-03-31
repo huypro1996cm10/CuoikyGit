@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điểm Danh - Bảo Mẫu</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .btn {
+            display: inline-block;
+            width: 250px;
+            padding: 15px;
+            margin: 15px;
+            font-size: 18px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-kid { background-color: #007bff; }
+        .btn-teacher { background-color: #28a745; }
+        .btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Điểm Danh</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeC.html">Trang Chủ</a></li>
+                <li><a href="Atend.html">Điểm Danh</a></li>
+                <li><a href="Sche.html">Lịch Giảng Dạy</a></li>
+                <li><a href="salary.html">Lương & Phụ Cấp</a></li>
+		<li><a href="info.html">Thông tin tài khoản</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Chọn loại điểm danh</h2>
+        <button onclick="location.href='AtendSub1.html'" class="btn btn-kid">Điểm danh Trẻ</button>
+        <button onclick="location.href='AtendSub2.html'" class="btn btn-teacher">Điểm danh Bảo mẫu</button>
+    </main>
+    
+    <script>
+	function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../Index_loginform.html';
+        }
+</script>
+</body>
+</html>
