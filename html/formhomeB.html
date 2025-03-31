@@ -12,10 +12,11 @@
         <nav>
             <ul>
                 <li><a href="formhomeB.html">Trang Chủ</a></li>
-                <li><a href="./B/tdht.html">Học Tập</a></li>
+                <li><a href="./B/hoctap.html">Học Tập</a></li>
                 <li><a href="./B/events.html">Sự Kiện Nhà Trường</a></li>
                 <li><a href="./B/payments.html">Thanh Toán Học Phí</a></li>
-		<li><a href="./B/infoUS.html">Thông tin tài khoản</a></li>
+		        <li><a href="./B/infoUS.html">Thông tin tài khoản</a></li>
+                <li><a href="./B/thongbao.html">Thông báo</a></li>
                 <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
             </ul>
         </nav>
@@ -24,6 +25,12 @@
         <h2>Xin chào, Phụ Huynh!</h2>
         <p>Chọn một chức năng để theo dõi con em.</p>
     </main>
-    <script src="../js/script.js"></script>
+    <script src="../js/script.js">
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../sIndex_loginform.html';
+        }
+</script>
 </body>
 </html>

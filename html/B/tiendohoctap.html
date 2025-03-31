@@ -27,13 +27,16 @@
             text-align: center;
         }
         .btn {
-            padding: 5px 10px;
+            padding: 8px 15px;
             margin: 5px;
             cursor: pointer;
+            border-radius: 5px;
+            border: none;
         }
         .btn-success { background-color: green; color: white; }
         .btn-warning { background-color: orange; color: white; }
         .btn-danger { background-color: red; color: white; }
+        .btn-back { background-color: blue; color: white; }
     </style>
 </head>
 <body onload="checkRole('parent')">
@@ -42,10 +45,11 @@
         <nav>
             <ul>
                 <li><a href="../formhomeB.html">Trang Chủ</a></li>
-                <li><a href="tdht.html">Học Tập</a></li>
+                <li><a href="hoctap.html">Học Tập</a></li>
                 <li><a href="even.html">Sự Kiện Nhà Trường</a></li>
                 <li><a href="payments.html">Thanh Toán Học Phí</a></li>
                 <li><a href="infoUS.html">Thông tin tài khoản</a></li>
+                <li><a href="thongbao.html">Thông báo</a></li>
                 <li><a href="../Index_loginform.html">Đăng Xuất</a></li>
             </ul>
         </nav>
@@ -54,6 +58,7 @@
         <div class="container">
             <h2>Tiến Độ Học Tập</h2>
             <button class="btn btn-success" onclick="addSubject()">Thêm Môn Học</button>
+            <button class="btn btn-back" onclick="goBack()">⬅ Quay lại</button>
             <table>
                 <thead>
                     <tr>
@@ -93,6 +98,10 @@
         </div>
     </main>
     <script>
+        function goBack() {
+            window.history.back();
+        }
+
         function addSubject() {
             const tableBody = document.getElementById("subjectTable");
             const id = tableBody.children.length + 1;

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhận Thông Báo</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .notification-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            display: none;
+            background: #ffcc00;
+            color: #000;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .btn {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .btn-notify {
+            background-color: blue;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Trang Phụ Huynh</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeB.html">Trang Chủ</a></li>
+                <li><a href="hoctap.html">Học Tập</a></li>
+                <li><a href="even.html">Sự Kiện Nhà Trường</a></li>
+                <li><a href="payments.html">Thanh Toán Học Phí</a></li>
+                <li><a href="infoUS.html">Thông tin tài khoản</a></li>
+                <li><a href="thongbao.html">Thông báo</a></li>
+                <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Hệ Thống Thông Báo</h1>
+    <div id="notificationBox" class="notification-container"></div>
+    <script>
+        function showNotification(message) {
+            const notificationBox = document.getElementById("notificationBox");
+            notificationBox.innerText = message;
+            notificationBox.style.display = "block";
+    
+            // Ẩn thông báo sau 5 giây
+            setTimeout(() => {
+                notificationBox.style.display = "none";
+            }, 5000);
+        }
+    
+        // Tự động hiển thị thông báo khi trang được tải
+        window.onload = function() {
+            showNotification("Bạn không có thông báo mới từ nhà trường!");
+        };
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../Index_loginform.html';
+        }
+    </script>
+
+</body>
+</html>

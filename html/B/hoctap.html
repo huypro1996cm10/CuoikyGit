@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Tập</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .finance-option {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .finance-btn {
+            padding: 20px 40px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .finance-btn:hover {
+            background-color: #45a049;
+        }
+        .back-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            background-color: #f44336;
+            color: white;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Trang Phụ Huynh</h1>
+        <nav>
+            <ul>
+                <li><a href="../formhomeB.html">Trang Chủ</a></li>
+                <li><a href="hoctap.html">Học Tập</a></li>
+                <li><a href="even.html">Sự Kiện Nhà Trường</a></li>
+                <li><a href="payments.html">Thanh Toán Học Phí</a></li>
+                <li><a href="infoUS.html">Thông tin tài khoản</a></li>
+                <li><a href="thongbao.html">Thông báo</a></li>
+                <li><a href="../Index_loginform.html">Đăng Xuất</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <h2>Chọn chức năng học tập</h2>
+        <div class="finance-option">
+            <button class="finance-btn" onclick="location.href='lichgiangday.html'">Lịch học</button>
+            <button class="finance-btn" onclick="location.href='tiendohoctap.html'">Tiến độ học tập</button>
+        </div>
+        <button class="back-btn" onclick="goBack()">⬅ Quay lại</button>
+    </main>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../Index_loginform.html';
+        }
+    </script>
+</body>
+</html>
