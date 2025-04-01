@@ -6,6 +6,7 @@
     <title>Quản Lý Học Sinh</title>
     <link rel="stylesheet" href="../../css/style.css">
     <style>
+        /* Bảng */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -29,18 +30,10 @@
             border: none;
             cursor: pointer;
         }
-        .edit-btn {
-            background-color: #ffc107;
-            color: white;
-        }
-        .delete-btn {
-            background-color: #dc3545;
-            color: white;
-        }
-        .add-btn {
-            background-color: #28a745;
-            color: white;
-        }
+        .edit-btn { background-color: #ffc107; color: white; }
+        .delete-btn { background-color: #dc3545; color: white; }
+        .add-btn { background-color: #28a745; color: white; }
+
         /* Thanh tìm kiếm */
         .search-container {
             display: flex;
@@ -55,6 +48,57 @@
             border-radius: 5px;
             font-size: 14px;
         }
+
+        /* MODAL (Form Thêm/Sửa) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px; /* MỞ RỘNG FORM */
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        .modal-content h2 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .modal-content label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        .modal-content input {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .modal-buttons button {
+            width: 48%;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .save-btn { background-color: #28a745; color: white; }
+        .cancel-btn { background-color: #dc3545; color: white; }
     </style>
 </head>
 <body onload="loadStudents()">
@@ -94,25 +138,42 @@
                     <th>Thao tác</th>
                 </tr>
             </thead>
-            <tbody id="studentTable">
-                <!-- Dữ liệu sẽ được điền bằng JavaScript -->
-            </tbody>
+            <tbody id="studentTable"></tbody>
         </table>
     </main>
+
+    <!-- Modal Thêm/Sửa Học Sinh -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Thêm Học Sinh</h2>
+            <label for="studentName">Họ và Tên:</label>
+            <input type="text" id="studentName" placeholder="Nhập họ và tên">
+
+            <label for="studentClass">Lớp:</label>
+            <input type="text" id="studentClass" placeholder="Nhập lớp">
+
+            <label for="studentTeacher">Bảo mẫu:</label>
+            <input type="text" id="studentTeacher" placeholder="Nhập bảo mẫu">
+
+            <div class="modal-buttons">
+                <button class="save-btn" onclick="saveStudent()">Lưu</button>
+                <button class="cancel-btn" onclick="closeModal()">Hủy</button>
+            </div>
+        </div>
+    </div>
 
 <script>
     let students = [
         { id: 1, name: "Nguyễn Văn A", class: "Mầm", teacher: "Cô Mai" },
         { id: 2, name: "Trần Thị B", class: "Trồi", teacher: "Thầy Minh" },
-        { id: 3, name: "Phạm Hồng C", class: "Lá", teacher: "Cô Mai" },
-        { id: 4, name: "Lê Minh D", class: "Mầm", teacher: "Cô Lan" },
-        { id: 5, name: "Nguyễn Thị E", class: "Lá", teacher: "Thầy Minh" }
+        { id: 3, name: "Phạm Hồng C", class: "Lá", teacher: "Cô Mai" }
     ];
+    let editingId = null;
 
     function loadStudents() {
         let tableBody = document.getElementById("studentTable");
         tableBody.innerHTML = "";
-        
+
         students.forEach(student => {
             let row = `<tr>
                 <td>${student.id}</td>
@@ -128,40 +189,87 @@
         });
     }
 
-    function filterStudents() {
-        let nameFilter = document.getElementById("search-name").value.toLowerCase();
-        let classFilter = document.getElementById("search-class").value.toLowerCase();
-        let teacherFilter = document.getElementById("search-teacher").value.toLowerCase();
-        
-        let tableBody = document.getElementById("studentTable");
-        tableBody.innerHTML = "";
+    function openAddModal() {
+        document.getElementById("modalTitle").innerText = "Thêm Học Sinh";
+        document.getElementById("studentName").value = "";
+        document.getElementById("studentClass").value = "";
+        document.getElementById("studentTeacher").value = "";
+        editingId = null;
+        document.getElementById("studentModal").style.display = "flex";
+    }
 
-        students.forEach(student => {
-            if (student.name.toLowerCase().includes(nameFilter) &&
-                student.class.toLowerCase().includes(classFilter) &&
-                student.teacher.toLowerCase().includes(teacherFilter)) {
-                let row = `<tr>
-                    <td>${student.id}</td>
-                    <td>${student.name}</td>
-                    <td>${student.class}</td>
-                    <td>${student.teacher}</td>
-                    <td>
-                        <button class="edit-btn" onclick="editStudent(${student.id})">Sửa</button>
-                        <button class="delete-btn" onclick="deleteStudent(${student.id})">Xóa</button>
-                    </td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            }
-        });
+    function closeModal() {
+        document.getElementById("studentModal").style.display = "none";
+    }
+
+    function saveStudent() {
+        let name = document.getElementById("studentName").value.trim();
+        let studentClass = document.getElementById("studentClass").value.trim();
+        let teacher = document.getElementById("studentTeacher").value.trim();
+
+        if (!name || !studentClass || !teacher) {
+            alert("Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
+
+        if (editingId === null) {
+            let newId = students.length ? Math.max(...students.map(s => s.id)) + 1 : 1;
+            students.push({ id: newId, name, class: studentClass, teacher });
+        } else {
+            let student = students.find(s => s.id === editingId);
+            student.name = name;
+            student.class = studentClass;
+            student.teacher = teacher;
+        }
+
+        loadStudents();
+        closeModal();
+    }
+
+    function editStudent(id) {
+        let student = students.find(s => s.id === id);
+        document.getElementById("modalTitle").innerText = "Chỉnh sửa Học Sinh";
+        document.getElementById("studentName").value = student.name;
+        document.getElementById("studentClass").value = student.class;
+        document.getElementById("studentTeacher").value = student.teacher;
+        editingId = id;
+        document.getElementById("studentModal").style.display = "flex";
     }
 
     function deleteStudent(id) {
-        let confirmDelete = confirm("Bạn có chắc chắn muốn xóa?");
-        if (confirmDelete) {
-            students = students.filter(s => s.id !== id);
-            loadStudents();
-        }
+        students = students.filter(s => s.id !== id);
+        loadStudents();
+    }
+
+    function filterStudents() {
+        let name = document.getElementById("search-name").value.toLowerCase();
+        let studentClass = document.getElementById("search-class").value.toLowerCase();
+        let teacher = document.getElementById("search-teacher").value.toLowerCase();
+
+        let filtered = students.filter(s =>
+            s.name.toLowerCase().includes(name) &&
+            s.class.toLowerCase().includes(studentClass) &&
+            s.teacher.toLowerCase().includes(teacher)
+        );
+
+        let tableBody = document.getElementById("studentTable");
+        tableBody.innerHTML = "";
+
+        filtered.forEach(student => {
+            let row = `<tr>
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${student.class}</td>
+                <td>${student.teacher}</td>
+                <td>
+                    <button class="edit-btn" onclick="editStudent(${student.id})">Sửa</button>
+                    <button class="delete-btn" onclick="deleteStudent(${student.id})">Xóa</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
     }
 </script>
+
 </body>
 </html>
