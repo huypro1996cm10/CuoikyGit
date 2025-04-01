@@ -77,6 +77,20 @@
             background-color: #dc3545;
             color: white;
         }
+.search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.search-container input,
+.search-container select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
     </style>
 </head>
 <body onload="loadUsers()">
@@ -85,7 +99,7 @@
         <nav>
             <ul>
                 <li><a href="../formhomeA.html">Trang Chủ</a></li>
-		<li><a href="Stu.html">Quản lý học sinh</a></li>
+                <li><a href="Stu.html">Quản lý học sinh</a></li>
                 <li><a href="UserMg.html">Quản lý Người Dùng</a></li>
                 <li><a href="FinanMg.html">Quản lý Tài Chính</a></li>
                 <li><a href="report.html">Báo Cáo & Phân Tích</a></li>
@@ -94,9 +108,22 @@
             </ul>
         </nav>
     </header>
+
     <main>
         <h2>Danh sách Người Dùng</h2>
         <button onclick="openModal()">Thêm Người Dùng</button>
+
+<div class="search-container">
+    <input type="text" id="search-name" placeholder="🔍 Nhập tên..." oninput="filterUsers()">
+    <input type="text" id="search-email" placeholder="📧 Nhập email..." oninput="filterUsers()">
+    <select id="search-role" onchange="filterUsers()">
+        <option value="">🎭 Chọn vai trò...</option>
+        <option value="Phụ huynh">Phụ huynh</option>
+        <option value="Giảng viên">Giảng viên</option>
+    </select>
+</div>
+
+
         <table>
             <thead>
                 <tr>
@@ -110,6 +137,7 @@
             <tbody id="userTableBody"></tbody>
         </table>
     </main>
+
     <div id="userModal" class="modal">
         <h3>Thông tin người dùng</h3>
         <label>Tên: <input type="text" id="userName"></label>
@@ -124,6 +152,7 @@
         <button onclick="saveUser()">Lưu</button>
         <button onclick="closeModal()">Hủy</button>
     </div>
+
     <script>
         let users = [
             { id: 1, name: "Nguyễn Văn A", email: "a@example.com", role: "Phụ huynh" },
@@ -131,9 +160,24 @@
         ];
 
         function loadUsers() {
+            filterUsers();
+        }
+
+        function filterUsers() {
+            let nameFilter = document.getElementById("search-name").value.toLowerCase();
+            let emailFilter = document.getElementById("search-email").value.toLowerCase();
+            let roleFilter = document.getElementById("search-role").value;
+
+            let filteredUsers = users.filter(user =>
+                user.name.toLowerCase().includes(nameFilter) &&
+                user.email.toLowerCase().includes(emailFilter) &&
+                (roleFilter === "" || user.role === roleFilter)
+            );
+
             let tableBody = document.getElementById("userTableBody");
             tableBody.innerHTML = "";
-            users.forEach(user => {
+
+            filteredUsers.forEach(user => {
                 let row = `<tr>
                     <td>${user.id}</td>
                     <td>${user.name}</td>
@@ -173,25 +217,18 @@
                 openModal(user);
             }
         }
-    function logout() {
-        localStorage.removeItem('loggedIn');
-        alert('Bạn đã đăng xuất!');
-        window.location.href = '../../Index_loginform.html';
-    }
-function deleteUser(id) {
-    let user = users.find(u => u.id === id);
-    if (!user) {
-        alert("Không tìm thấy người dùng!");
-        return;
-    }
 
-    let confirmDelete = confirm(`Bạn có chắc chắn muốn xóa người dùng "${user.name}" không?`);
-    if (confirmDelete) {
-        users = users.filter(u => u.id !== id);
-        loadUsers();
-        alert("Xóa thành công!");
-    }
-}
+        function deleteUser(id) {
+            users = users.filter(u => u.id !== id);
+            loadUsers();
+            alert("Xóa thành công!");
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../Index_loginform.html';
+        }
 
         loadUsers();
     </script>
