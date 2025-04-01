@@ -269,6 +269,11 @@
             tableBody.innerHTML += row;
         });
     }
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            alert('Bạn đã đăng xuất!');
+            window.location.href = '../../Index_loginform.html';
+        }
 </script>
 
 </body>
